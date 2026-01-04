@@ -1,122 +1,70 @@
-#!/usr/bin/env python3
-"""
-TradingView-Binance Automated Trading Bot
-Main entry point for the trading bot application
-"""
-
+from flask import Flask, request, jsonify
 import os
 import sys
-import logging
-import argparse
-from pathlib import Path
-from dotenv import load_dotenv
+import traceback
 
-# Add src directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+app = Flask(__name__)
 
-from email_monitor import EmailMonitor
-from trading_engine import TradingEngine
-from risk_manager import RiskManager
-from logger import setup_logging
+# GLOBAL ERROR LOG
+STARTUP_ERRORS = []
 
-# Load environment variables
-load_dotenv()
+# WRAPPED IMPORTS to prevent 502 Crash
+try:
+    from binance_real_handler import handle_real_binance_order
+except Exception as e:
+    STARTUP_ERRORS.append(f"Binance REAL Import Fail: {str(e)}\n{traceback.format_exc()}")
+    def handle_real_binance_order(data): return {"status": "error", "message": "Binance Real Handler Crashed on Load"}
 
-logger = logging.getLogger(__name__)
+try:
+    from flattrade_handler import handle_flattrade_order
+except Exception as e:
+    STARTUP_ERRORS.append(f"Flattrade Import Fail: {str(e)}\n{traceback.format_exc()}")
+    def handle_flattrade_order(data): return {"status": "error", "message": "Flattrade Handler Crashed on Load"}
+
+try:
+    from binance_handler import handle_binance_order
+except ImportError:
+    try:
+        from binance_handler_fix import handle_binance_order
+    except Exception as e:
+        STARTUP_ERRORS.append(f"Binance TEST Import Fail: {str(e)}\n{traceback.format_exc()}")
+        def handle_binance_order(data): return {"status": "error", "message": "Binance Test Handler Crashed on Load"}
 
 
-class TradingBot:
-    """Main trading bot orchestrator"""
+@app.route('/')
+def home():
+    status = "Healthy" if not STARTUP_ERRORS else "Degraded"
+    return jsonify({
+        "status": status,
+        "startup_errors": STARTUP_ERRORS,
+        "message": "Unified Trading Bot V2.0 (Self-Diagnostic Mode)"
+    }), 200
 
-    def __init__(self, config_file=None):
-        """Initialize the trading bot with configuration"""
-        setup_logging()
+@app.route('/debug')
+def debug_logs():
+    """Endpoint to view internal import errors"""
+    return "<pre>" + "\n\n".join(STARTUP_ERRORS) + "</pre>" if STARTUP_ERRORS else "No Startup Errors."
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"status": "error", "message": "No JSON data"}), 400
         
-        self.email_monitor = EmailMonitor()
-        self.trading_engine = TradingEngine()
-        self.risk_manager = RiskManager()
+        broker = data.get('broker', 'BINANCE').upper()
+        print(f"Received Signal: {broker}")
         
-        logger.info("Trading Bot initialized successfully")
-
-    def start(self):
-        """Start the bot and begin monitoring alerts"""
-        logger.info("Starting TradingView Alert Monitoring...")
-        
-        try:
-            while True:
-                # Check for new alerts
-                alerts = self.email_monitor.check_alerts()
-                
-                for alert in alerts:
-                    logger.info(f"Processing alert: {alert}")
-                    
-                    # Parse alert signal
-                    signal = self.email_monitor.parse_alert(alert)
-                    
-                    if not signal:
-                        logger.warning("Could not parse alert")
-                        continue
-                    
-                    # Validate with risk manager
-                    if not self.risk_manager.validate_signal(signal):
-                        logger.warning(f"Signal failed risk validation: {signal}")
-                        continue
-                    
-                    # Execute trade
-                    try:
-                        order = self.trading_engine.execute_signal(signal)
-                        logger.info(f"Order executed: {order}")
-                    except Exception as e:
-                        logger.error(f"Error executing order: {e}")
-                        
-        except KeyboardInterrupt:
-            logger.info("Bot stopped by user")
-        except Exception as e:
-            logger.error(f"Critical error: {e}", exc_info=True)
-        finally:
-            self.shutdown()
-
-    def shutdown(self):
-        """Clean shutdown of the bot"""
-        logger.info("Shutting down bot...")
-        # Add cleanup code here
-        logger.info("Bot shutdown complete")
-
-
-def main():
-    """Entry point for the application"""
-    parser = argparse.ArgumentParser(description="TradingView-Binance Trading Bot")
-    parser.add_argument(
-        "--config",
-        type=str,
-        default="config/config.json",
-        help="Path to configuration file"
-    )
-    parser.add_argument(
-        "--demo",
-        action="store_true",
-        help="Run in demo/testnet mode"
-    )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Enable debug logging"
-    )
-    
-    args = parser.parse_args()
-    
-    # Set demo mode
-    if args.demo:
-        os.environ["BINANCE_TESTNET"] = "true"
-    
-    # Set debug logging
-    if args.debug:
-        os.environ["LOG_LEVEL"] = "DEBUG"
-    
-    # Create and start bot
-    bot = TradingBot(config_file=args.config)
-    bot.start()
-
+        if broker == 'FLATTRADE':
+            return jsonify(handle_flattrade_order(data))
+        elif broker == 'BINANCE_REAL':
+            return jsonify(handle_real_binance_order(data))
+        else:
+            return jsonify(handle_binance_order(data))
+            
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    main()
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
