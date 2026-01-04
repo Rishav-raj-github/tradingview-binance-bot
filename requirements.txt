@@ -11,3 +11,5 @@ beautifulsoup4
 html2text
 colorama
 pya3
+Flask
+gunicorn
