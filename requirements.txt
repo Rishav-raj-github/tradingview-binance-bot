@@ -10,3 +10,4 @@ python-dotenv
 beautifulsoup4
 html2text
 colorama
+pya3
