@@ -6,7 +6,6 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-
 class TradingEngine:
     """
     Trading engine for executing trades on Binance Futures.
@@ -36,8 +35,43 @@ class TradingEngine:
             'sandbox': sandbox
         })
         
+        # CRITICAL FIX #1: Load markets before any trading operations
+        try:
+            self.exchange.load_markets()
+            logger.info(f"Markets loaded successfully for {exchange_id}")
+        except Exception as e:
+            logger.error(f"Error loading markets: {str(e)}")
+        
         self.positions = {}
         self.open_orders = {}
+    
+    def _format_symbol(self, symbol: str) -> str:
+        """
+        Format symbol to CCXT standard (with forward slash).
+        Converts BTCUSDT -> BTC/USDT
+        
+        Args:
+            symbol: Symbol in any format
+            
+        Returns:
+            Formatted symbol for CCXT
+        """
+        # If symbol already has /, return as-is
+        if '/' in symbol:
+            return symbol
+        
+        # Handle common formats
+        if symbol.endswith('USDT'):
+            return symbol[:-4] + '/USDT'
+        elif symbol.endswith('BUSD'):
+            return symbol[:-4] + '/BUSD'
+        elif symbol.endswith('USDC'):
+            return symbol[:-4] + '/USDC'
+        elif symbol.endswith('USDT'):
+            return symbol[:-4] + '/USDT'
+        else:
+            # Default: assume last 4 chars are quote currency
+            return symbol[:-4] + '/' + symbol[-4:]
     
     def get_account_balance(self) -> Dict:
         """
@@ -63,7 +97,7 @@ class TradingEngine:
         Place a market order.
         
         Args:
-            symbol: Trading pair (e.g., 'BTC/USDT')
+            symbol: Trading pair (e.g., 'BTCUSDT' or 'BTC/USDT')
             side: Order side ('buy' or 'sell')
             amount: Order amount
             reduce_only: Reduce position only (for futures)
@@ -72,22 +106,42 @@ class TradingEngine:
             Order details or None
         """
         try:
+            # CRITICAL FIX #2: Format symbol correctly for CCXT
+            formatted_symbol = self._format_symbol(symbol)
+            
+            # Validate inputs
+            if not formatted_symbol:
+                logger.error(f"Invalid symbol format: {symbol}")
+                return None
+            
+            if side.lower() not in ['buy', 'sell']:
+                logger.error(f"Invalid side: {side}. Must be 'buy' or 'sell'")
+                return None
+            
+            if amount <= 0:
+                logger.error(f"Invalid amount: {amount}. Must be positive")
+                return None
+            
             params = {}
             if reduce_only:
                 params['reduceOnly'] = True
             
+            logger.info(f"Placing market order: {side.upper()} {amount} {formatted_symbol}")
+            
+            # CRITICAL FIX #3: Use correct CCXT method with formatted symbol
             order = self.exchange.create_market_order(
-                symbol=symbol,
-                side=side,
+                symbol=formatted_symbol,
+                side=side.lower(),
                 amount=amount,
                 params=params
             )
             
-            logger.info(f"Market order placed: {order['id']} - {side} {amount} {symbol}")
+            logger.info(f"Market order placed successfully: {order['id']} - {side} {amount} {formatted_symbol}")
             self.open_orders[order['id']] = order
             return order
+            
         except Exception as e:
-            logger.error(f"Error placing market order: {str(e)}")
+            logger.error(f"Error placing market order for {symbol}: {str(e)}", exc_info=True)
             return None
     
     def place_limit_order(self, symbol: str, side: str, amount: float,
@@ -106,23 +160,33 @@ class TradingEngine:
             Order details or None
         """
         try:
+            # Format symbol correctly
+            formatted_symbol = self._format_symbol(symbol)
+            
+            if not formatted_symbol:
+                logger.error(f"Invalid symbol format: {symbol}")
+                return None
+            
             params = {}
             if reduce_only:
                 params['reduceOnly'] = True
             
+            logger.info(f"Placing limit order: {side.upper()} {amount} {formatted_symbol} @ {price}")
+            
             order = self.exchange.create_limit_order(
-                symbol=symbol,
-                side=side,
+                symbol=formatted_symbol,
+                side=side.lower(),
                 amount=amount,
                 price=price,
                 params=params
             )
             
-            logger.info(f"Limit order placed: {order['id']} - {side} {amount} {symbol} @ {price}")
+            logger.info(f"Limit order placed: {order['id']} - {side} {amount} {formatted_symbol} @ {price}")
             self.open_orders[order['id']] = order
             return order
+            
         except Exception as e:
-            logger.error(f"Error placing limit order: {str(e)}")
+            logger.error(f"Error placing limit order: {str(e)}", exc_info=True)
             return None
     
     def cancel_order(self, order_id: str, symbol: str) -> bool:
@@ -137,7 +201,8 @@ class TradingEngine:
             True if successful, False otherwise
         """
         try:
-            self.exchange.cancel_order(order_id, symbol=symbol)
+            formatted_symbol = self._format_symbol(symbol)
+            self.exchange.cancel_order(order_id, symbol=formatted_symbol)
             if order_id in self.open_orders:
                 del self.open_orders[order_id]
             logger.info(f"Order cancelled: {order_id}")
@@ -157,10 +222,12 @@ class TradingEngine:
             List of open positions
         """
         try:
+            if symbol:
+                symbol = self._format_symbol(symbol)
             positions = self.exchange.fetch_positions([symbol] if symbol else None)
             return [p for p in positions if p['contracts'] > 0]
         except Exception as e:
-            logger.error(f"Error fetching positions: {str(e)}")
+            logger.error(f"Error fetching positions: {str(e)}", exc_info=True)
             return []
     
     def get_ticker(self, symbol: str) -> Optional[Dict]:
@@ -174,7 +241,8 @@ class TradingEngine:
             Ticker data or None
         """
         try:
-            return self.exchange.fetch_ticker(symbol)
+            formatted_symbol = self._format_symbol(symbol)
+            return self.exchange.fetch_ticker(formatted_symbol)
         except Exception as e:
             logger.error(f"Error fetching ticker: {str(e)}")
             return None
