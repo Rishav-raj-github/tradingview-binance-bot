@@ -13,3 +13,5 @@ colorama
 pya3
 Flask
 gunicorn
+
+firebase-admin
