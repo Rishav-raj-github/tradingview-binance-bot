@@ -77,6 +77,7 @@ class FirestorePnLRecorder:
             # Prepare order document
             order_doc = {
                 'orderId': order_data.get('orderId'),
+                            'broker': order_data.get('broker', 'UNKNOWN'),
                 'symbol': order_data.get('symbol'),
                 'side': order_data.get('side'),  # BUY or SELL
                 'price': float(order_data.get('price', 0)),
@@ -123,6 +124,7 @@ class FirestorePnLRecorder:
             
             trade_doc = {
                 'tradeId': trade_data.get('tradeId'),
+                            'broker': trade_data.get('broker', 'UNKNOWN'),
                 'symbol': trade_data.get('symbol'),
                 'entry_price': entry_price,
                 'exit_price': exit_price,
