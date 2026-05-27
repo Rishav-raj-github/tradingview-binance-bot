@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class EmailMonitor:
     """
-    Monitors email alerts from TradingView and parses trading signals.
+    Monitors email alerts from MarketFeed and parses execution signals.
     """
     
     def __init__(self, email_address: str, password: str, imap_server: str = "imap.gmail.com"):
@@ -51,9 +51,9 @@ class EmailMonitor:
             self.mail.close()
             logger.info("Disconnected from email server")
     
-    def fetch_trading_alerts(self, sender_filter: str = "noreply@tradingview.com") -> List[Dict]:
+    def fetch_trading_alerts(self, sender_filter: str = "noreply@market_feed.com") -> List[Dict]:
         """
-        Fetch unread trading alerts from email.
+        Fetch unread execution alerts from email.
         
         Args:
             sender_filter: Filter emails from specific sender
@@ -89,7 +89,7 @@ class EmailMonitor:
     
     def _parse_alert(self, email_msg) -> Optional[Dict]:
         """
-        Parse TradingView alert from email message.
+        Parse MarketFeed alert from email message.
         
         Args:
             email_msg: Email message object

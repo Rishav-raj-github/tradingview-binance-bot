@@ -1,5 +1,5 @@
-from binance.client import Client
-from binance.enums import *
+from digital_asset.client import Client
+from digital_asset.enums import *
 import os
 import json
 import logging
@@ -28,7 +28,7 @@ def handle_binance_order(data):
         order_type = data.get('type', 'MARKET').upper()
         price = data.get('price', None)
         
-        logger.info(f"Processing Binance Signal: {side} {qty} {symbol} @ {order_type}")
+        logger.info(f"Processing DigitalAsset Signal: {side} {qty} {symbol} @ {order_type}")
         
         # Validation: Check if symbol is valid
         if not symbol.endswith(('USDT', 'USDC', 'BUSD', 'BNB')):

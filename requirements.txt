@@ -4,7 +4,7 @@ langchain-core
 langchain-community
 langchain-google-genai
 langchain-openai
-python-binance
+python-digital_asset
 pydantic
 python-dotenv
 beautifulsoup4

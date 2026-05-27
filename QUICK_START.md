@@ -1,14 +1,14 @@
 # 🚀 QUICK START: Make Orders Happen in 5 Minutes
 
-> **Fastest way to start auto-trading with TradingView + Binance**
+> **Fastest way to start auto-execution with MarketFeed + DigitalAsset**
 
 ---
 
 ## ✅ What You Have (Already Done)
 
 - ✅ Code deployed to Railway
-- ✅ Webhook URL ready: `https://tradingview-webhook-bot-production-bf38.up.railway.app/webhook`
-- ✅ Binance API keys configured in Railway
+- ✅ Webhook URL ready: `https://market_feed-webhook-bot-production-bf38.up.railway.app/webhook`
+- ✅ DigitalAsset API keys configured in Railway
 - ✅ Flask server running 24/7
 
 ---
@@ -18,12 +18,12 @@
 ### STEP 1: Get Your Webhook URL (Copy This)
 
 ```
-https://tradingview-webhook-bot-production-bf38.up.railway.app/webhook
+https://market_feed-webhook-bot-production-bf38.up.railway.app/webhook
 ```
 
-### STEP 2: Go to TradingView → Chart → Alert
+### STEP 2: Go to MarketFeed → Chart → Alert
 
-1. Open your trading chart in TradingView
+1. Open your execution chart in MarketFeed
 2. Click: **Alert** (bell icon)
 3. Set your condition (e.g., "Close > Open")
 4. Click **Create Alert**
@@ -38,7 +38,7 @@ In the alert dialog:
 
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "buy",
     "quantity": 0.001,
@@ -51,16 +51,16 @@ In the alert dialog:
 ### STEP 4: Wait for Your Chart Condition
 
 When the chart triggers (e.g., candle closes above resistance):
-- ✅ TradingView fires alert automatically
+- ✅ MarketFeed fires alert automatically
 - ✅ Webhook message sent to Railway
-- ✅ Order placed on Binance testnet
+- ✅ Order placed on DigitalAsset testnet
 - ✅ Within 10 seconds: Order visible in your account
 
-### STEP 5: Verify in Binance
+### STEP 5: Verify in DigitalAsset
 
 **Check Testnet** (free demo):
 1. Go to: https://testnet.binance.vision
-2. Login with your Binance testnet account
+2. Login with your DigitalAsset testnet account
 3. Go to: **Futures → Order History**
 4. Find your **BTCUSDT** order
 5. Status: **FILLED** ✅
@@ -94,10 +94,10 @@ When you're ready:
 BTC breaks above $43,000
 ```
 
-**TradingView Alert Sends:**
+**MarketFeed Alert Sends:**
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "buy",
     "quantity": 0.001,
@@ -109,11 +109,11 @@ BTC breaks above $43,000
 
 | Time | Action | Status |
 |------|--------|--------|
-| T+0s | Alert fires on TradingView | 🟢 Ready |
+| T+0s | Alert fires on MarketFeed | 🟢 Ready |
 | T+1s | Webhook sent to Railway | 📡 Sending |
 | T+2s | Flask receives message | ✅ Received |
 | T+3s | Order validation | ✅ Valid |
-| T+4s | API call to Binance | 🔗 Connecting |
+| T+4s | API call to DigitalAsset | 🔗 Connecting |
 | T+5s | Order created | ✅ FILLED |
 | T+6s | Response logged | 📝 Confirmed |
 | T+7s | Order in your account | 🎉 SUCCESS |
@@ -130,15 +130,15 @@ https://railway.com → Projects → truthful-creativity → Logs
 
 Look for:
 ```
-✅ Processing Binance Signal: BUY BTCUSDT 0.001
+✅ Processing DigitalAsset Signal: BUY BTCUSDT 0.001
 ✅ Current price: $43,500
 ✅ Order placed successfully
 ```
 
-### Binance Account (see your filled orders)
+### DigitalAsset Account (see your filled orders)
 
 **Testnet**: https://testnet.binance.vision → Futures → Order History
-**Live**: https://binance.com → Futures → Order History
+**Live**: https://digital_asset.com → Futures → Order History
 
 ---
 
@@ -147,7 +147,7 @@ Look for:
 ### Sell Signal
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "sell",
     "quantity": 0.001,
@@ -158,7 +158,7 @@ Look for:
 ### Limit Order
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "ETHUSDT",
     "side": "buy",
     "quantity": 0.1,
@@ -167,7 +167,7 @@ Look for:
 }
 ```
 
-### Live Trading (Real Money)
+### Live Execution (Real Money)
 ```json
 {
     "broker": "BINANCE_REAL",
@@ -178,7 +178,7 @@ Look for:
 }
 ```
 
-### Stock Trading (Flattrade)
+### Stock Execution (Flattrade)
 ```json
 {
     "broker": "FLATTRADE",
@@ -204,11 +204,11 @@ Look for:
 ## 🚀 You're Ready!
 
 1. ✅ Copy your webhook URL
-2. ✅ Go to TradingView
+2. ✅ Go to MarketFeed
 3. ✅ Create alert with webhook message
 4. ✅ Wait for chart condition
 5. ✅ Watch orders execute automatically
-6. ✅ Check Railway logs + Binance account
+6. ✅ Check Railway logs + DigitalAsset account
 
 **That's it! Your bot is now live and ready to execute orders!**
 

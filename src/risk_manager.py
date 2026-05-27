@@ -27,7 +27,7 @@ class RiskParameters:
 
 class RiskManager:
     """
-    Manages trading risk including position sizing,
+    Manages execution risk including position sizing,
     stop losses, and drawdown monitoring.
     """
     
@@ -65,7 +65,7 @@ class RiskManager:
         Check if a new position meets risk criteria.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             size: Position size
             entry_price: Entry price
             
@@ -145,7 +145,7 @@ class RiskManager:
         Register an open position.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             size: Position size
             entry_price: Entry price
             stop_loss: Stop loss price
@@ -166,7 +166,7 @@ class RiskManager:
         Update position with current price.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             current_price: Current market price
         """
         if symbol not in self.open_positions:
@@ -184,7 +184,7 @@ class RiskManager:
         Close an open position.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             exit_price: Exit price
             
         Returns:

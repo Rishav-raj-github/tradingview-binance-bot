@@ -36,13 +36,13 @@ The following three handler files need to be updated to pass the `broker` field 
 
 ### 1. binance_handler.py
 
-Find the calls to `record_order_to_firestore()` and `record_trade_to_firestore()` and add `'broker': 'BINANCE'` to the data dictionaries:
+Find the calls to `record_order_to_firestore()` and `record_trade_to_firestore()` and add `'broker': 'DIGITAL_ASSET'` to the data dictionaries:
 
 ```python
 # For orders:
 order_data = {
     'orderId': order_id,
-    'broker': 'BINANCE',  # ← ADD THIS
+    'broker': 'DIGITAL_ASSET',  # ← ADD THIS
     'symbol': symbol,
     'side': side,
     'price': price,
@@ -55,7 +55,7 @@ record_order_to_firestore(order_data)
 # For trades:
 trade_data = {
     'tradeId': trade_id,
-    'broker': 'BINANCE',  # ← ADD THIS
+    'broker': 'DIGITAL_ASSET',  # ← ADD THIS
     'symbol': symbol,
     'entry_price': entry_price,
     'exit_price': exit_price,
@@ -112,8 +112,8 @@ record_trade_to_firestore(trade_data)
 Once all handlers are updated, you'll be able to query PnL by broker:
 
 ```python
-# Get all Binance trades
-binance_trades = db.collection('trades').where('broker', '==', 'BINANCE').stream()
+# Get all DigitalAsset trades
+binance_trades = db.collection('trades').where('broker', '==', 'DIGITAL_ASSET').stream()
 
 # Get all Kotak trades
 kotak_trades = db.collection('trades').where('broker', '==', 'KOTAK').stream()
@@ -144,11 +144,11 @@ from firebase_admin import firestore
 
 db = firestore.client()
 
-# Example: Mark all BTCUSDT trades as BINANCE
+# Example: Mark all BTCUSDT trades as DIGITAL_ASSET
 trades = db.collection('trades').where('symbol', '==', 'BTCUSDT').stream()
 for trade in trades:
     if trade.get('broker') is None or trade.get('broker') == 'UNKNOWN':
-        db.collection('trades').document(trade.id).update({'broker': 'BINANCE'})
+        db.collection('trades').document(trade.id).update({'broker': 'DIGITAL_ASSET'})
 ```
 
 ---
@@ -157,8 +157,8 @@ for trade in trades:
 
 After updating all handlers, verify the setup:
 
-1. Create a test trade in Binance
-2. Check Firestore: Should see `'broker': 'BINANCE'`
+1. Create a test trade in DigitalAsset
+2. Check Firestore: Should see `'broker': 'DIGITAL_ASSET'`
 3. Create a test trade in Kotak
 4. Check Firestore: Should see `'broker': 'KOTAK'`
 5. Run query to separate PnL by broker

@@ -1,14 +1,14 @@
-# 🚀 COMPLETE SETUP: Make Your First Binance Order
+# 🚀 COMPLETE SETUP: Make Your First DigitalAsset Order
 
-**Goal:** Connect TradingView → Railway → Binance and place your first live order
+**Goal:** Connect MarketFeed → Railway → DigitalAsset and place your first live order
 
 **Time to complete:** 15 minutes
 
 ---
 
-## PART 1: GET BINANCE TESTNET API KEYS (5 minutes)
+## PART 1: GET DIGITAL_ASSET TESTNET API KEYS (5 minutes)
 
-### Step 1.1: Go to Binance Testnet
+### Step 1.1: Go to DigitalAsset Testnet
 ```
 URL: https://testnet.binance.vision
 ```
@@ -39,7 +39,7 @@ URL: https://testnet.binance.vision
 1. Click "+ New Project"
 2. Select "Deploy from GitHub repo"
 3. Connect your GitHub account
-4. Select: `Rishav-raj-github/tradingview-binance-bot`
+4. Select: `Rishav-raj-github/market_feed-digital_asset-bot`
 5. Click "Deploy"
 
 ### Step 2.3: Add Environment Variables
@@ -68,10 +68,10 @@ PORT=8080
 
 ---
 
-## PART 3: SET UP TRADINGVIEW ALERT (3 minutes)
+## PART 3: SET UP MARKET_FEED ALERT (3 minutes)
 
 ### Step 3.1: Create a Simple Chart Alert
-1. Go to https://tradingview.com
+1. Go to https://market_feed.com
 2. Open any BTCUSDT chart (1-hour timeframe)
 3. Create a simple strategy or use an existing indicator
 
@@ -79,7 +79,7 @@ PORT=8080
 1. Click "Alert" (bell icon)
 2. Create new alert with these settings:
 
-**Alert Name:** `Binance Test Order`
+**Alert Name:** `DigitalAsset Test Order`
 
 **Condition:** `Close > Open` (or any simple condition)
 
@@ -90,7 +90,7 @@ PORT=8080
 **Message:** Copy this EXACTLY:
 ```json
 {
-  "broker": "BINANCE",
+  "broker": "DIGITAL_ASSET",
   "symbol": "BTCUSDT",
   "side": "buy",
   "quantity": 0.001,
@@ -124,7 +124,7 @@ PORT=8080
 **Body:** (select "raw" and "JSON")
 ```json
 {
-  "broker": "BINANCE",
+  "broker": "DIGITAL_ASSET",
   "symbol": "BTCUSDT",
   "side": "buy",
   "quantity": 0.001,
@@ -140,7 +140,7 @@ PORT=8080
 curl -X POST https://your-app-xxxx.railway.app/webhook \
   -H "Content-Type: application/json" \
   -d '{
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "buy",
     "quantity": 0.001,
@@ -153,13 +153,13 @@ curl -X POST https://your-app-xxxx.railway.app/webhook \
 2. Click **Deployments** → Latest
 3. Go to **Logs** tab
 4. Look for:
-   - `"Processing Binance Signal: BUY BTCUSDT 0.001 @ MARKET"`
+   - `"Processing DigitalAsset Signal: BUY BTCUSDT 0.001 @ MARKET"`
    - `"Order placed successfully"`
    - Order ID number
 
 ✅ **SUCCESS:** You should see order confirmation in logs
 
-### Step 4.3: Verify Order in Binance Testnet
+### Step 4.3: Verify Order in DigitalAsset Testnet
 1. Go to https://testnet.binance.vision
 2. Go to **Open Orders** or **Order History**
 3. Look for your BTCUSDT order
@@ -179,7 +179,7 @@ curl -X POST https://your-app-xxxx.railway.app/webhook \
 **Cause:** 0.001 BTC * price < 10 USDT  
 **Fix:** Increase quantity to 0.05 or more
 
-### Issue: "Order not appearing in Binance"
+### Issue: "Order not appearing in DigitalAsset"
 **Cause:** Check if testnet credentials are correct  
 **Fix:** Verify API keys in Railway Variables
 
@@ -189,12 +189,12 @@ curl -X POST https://your-app-xxxx.railway.app/webhook \
 
 ---
 
-## PART 6: MOVE TO LIVE TRADING (When Ready)
+## PART 6: MOVE TO LIVE EXECUTION (When Ready)
 
-### Step 6.1: Get Real Binance API Keys
-1. Go to https://www.binance.com/en/account/api-management (LIVE, not testnet)
+### Step 6.1: Get Real DigitalAsset API Keys
+1. Go to https://www.digital_asset.com/en/account/api-management (LIVE, not testnet)
 2. Create new API key
-3. Enable: "Enable Reading", "Enable Spot & Margin Trading", "Enable Futures Trading"
+3. Enable: "Enable Reading", "Enable Spot & Margin Execution", "Enable Futures Execution"
 4. Copy keys
 
 ### Step 6.2: Update Railway Variables
@@ -204,7 +204,7 @@ BINANCE_API_SECRET=your_REAL_api_secret
 BINANCE_TESTNET=false  ← CHANGE THIS TO FALSE
 ```
 
-### Step 6.3: Update TradingView Alert
+### Step 6.3: Update MarketFeed Alert
 Change message to:
 ```json
 {
@@ -219,7 +219,7 @@ Change message to:
 ### Step 6.4: Test with Small Order
 1. Send a test order with 0.001 BTC (~$40)
 2. Watch Railway logs
-3. Check Binance Live account for filled order
+3. Check DigitalAsset Live account for filled order
 4. If successful, increase quantity gradually
 
 ⚠️ **WARNING:**  
@@ -234,33 +234,33 @@ Change message to:
 
 ### URLs You Need
 ```
-Binance Testnet: https://testnet.binance.vision
+DigitalAsset Testnet: https://testnet.binance.vision
 Railway: https://railway.app
-TradingView: https://tradingview.com
+MarketFeed: https://market_feed.com
 Webhook URL: https://your-app-xxxx.railway.app/webhook
 ```
 
 ### API Keys Location
 ```
 Testnet: https://testnet.binance.vision → Generate HMAC SHA256 Key
-Live: https://www.binance.com/en/account/api-management
+Live: https://www.digital_asset.com/en/account/api-management
 ```
 
 ### Sample Webhook Messages
 
 **Buy Order:**
 ```json
-{"broker": "BINANCE", "symbol": "BTCUSDT", "side": "buy", "quantity": 0.001, "type": "MARKET"}
+{"broker": "DIGITAL_ASSET", "symbol": "BTCUSDT", "side": "buy", "quantity": 0.001, "type": "MARKET"}
 ```
 
 **Sell Order:**
 ```json
-{"broker": "BINANCE", "symbol": "BTCUSDT", "side": "sell", "quantity": 0.001, "type": "MARKET"}
+{"broker": "DIGITAL_ASSET", "symbol": "BTCUSDT", "side": "sell", "quantity": 0.001, "type": "MARKET"}
 ```
 
 **Limit Order:**
 ```json
-{"broker": "BINANCE", "symbol": "BTCUSDT", "side": "buy", "quantity": 0.001, "type": "LIMIT", "price": 43000}
+{"broker": "DIGITAL_ASSET", "symbol": "BTCUSDT", "side": "buy", "quantity": 0.001, "type": "LIMIT", "price": 43000}
 ```
 
 ---
@@ -270,10 +270,10 @@ Live: https://www.binance.com/en/account/api-management
 Before you consider "done", verify:
 
 - [ ] Railway app is running (check logs)
-- [ ] Binance testnet API keys are added to Railway
-- [ ] TradingView webhook URL is correct
+- [ ] DigitalAsset testnet API keys are added to Railway
+- [ ] MarketFeed webhook URL is correct
 - [ ] Test order sent successfully
-- [ ] Order appears in Binance Testnet Order History
+- [ ] Order appears in DigitalAsset Testnet Order History
 - [ ] Railway logs show "Order placed successfully"
 - [ ] You've tested at least 3-5 orders
 - [ ] All orders executed correctly
@@ -290,26 +290,26 @@ If something doesn't work:
 2. Verify API keys are correctly set
 3. Make sure webhook URL is exactly right
 4. Test with Postman to isolate the issue
-5. Check Binance account status and balance
+5. Check DigitalAsset account status and balance
 
 **📝 Common Error Codes:**
 - `-2019`: Margin insufficient
 - `-1013`: Invalid quantity
 - `-1000`: Unauthorized API key
 - `MIN_NOTIONAL`: Order too small
-- `INVALID_SYMBOL`: Wrong trading pair format
+- `INVALID_SYMBOL`: Wrong execution pair format
 
 ---
 
 ## 🎉 YOU'RE DONE!
 
-Your auto-trading bot is now connected and working.
+Your auto-execution bot is now connected and working.
 
 Next orders will:
-1. Come from TradingView alerts
+1. Come from MarketFeed alerts
 2. Hit your Railway webhook
 3. Get processed by the Python bot
-4. Execute on Binance Testnet/Live
+4. Execute on DigitalAsset Testnet/Live
 5. Show up in Order History
 
-**Happy trading!** 🚀
+**Happy execution!** 🚀

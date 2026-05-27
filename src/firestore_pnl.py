@@ -31,8 +31,8 @@ class FirestorePnLRecorder:
                             If None, uses GOOGLE_APPLICATION_CREDENTIALS env var
         """
         self.db = None
-        self.project_id = "trading-bot-automation-487910"
-        self.database_name = "trading-bot-pnl"
+        self.project_id = "execution-bot-automation-487910"
+        self.database_name = "execution-bot-pnl"
         
         if not FIRESTORE_AVAILABLE:
             logger.warning("Firestore unavailable - PnL recording disabled")

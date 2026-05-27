@@ -1,14 +1,14 @@
 # 🚀 MAKE ORDERS HAPPEN: Complete Execution Guide
 
-> **FINAL STEP**: Connect TradingView → Railway → Binance to place REAL orders automatically
+> **FINAL STEP**: Connect MarketFeed → Railway → DigitalAsset to place REAL orders automatically
 
 ---
 
 ## ✅ What's Already Done
 
 - ✅ Code deployed to Railway
-- ✅ Binance API keys configured in Railway Variables
-- ✅ Flask webhook server running at: `https://tradingview-webhook-bot-production-bf38.up.railway.app`
+- ✅ DigitalAsset API keys configured in Railway Variables
+- ✅ Flask webhook server running at: `https://market_feed-webhook-bot-production-bf38.up.railway.app`
 - ✅ Both Testnet (DEMO) and Live modes configured
 
 ---
@@ -16,46 +16,46 @@
 ## 🎯 YOUR WEBHOOK URL (Critical)
 
 ```
-https://tradingview-webhook-bot-production-bf38.up.railway.app/webhook
+https://market_feed-webhook-bot-production-bf38.up.railway.app/webhook
 ```
 
-**Save this URL** - You'll need it in TradingView alerts
+**Save this URL** - You'll need it in MarketFeed alerts
 
 ---
 
-## 📋 STEP 1: Choose Your Trading Mode
+## 📋 STEP 1: Choose Your Execution Mode
 
 You have 3 modes configured:
 
-### Mode 1: BINANCE TESTNET (RECOMMENDED FIRST)
+### Mode 1: DIGITAL_ASSET TESTNET (RECOMMENDED FIRST)
 ✅ **For Testing** - NO REAL MONEY USED
 - Set `BINANCE_TESTNET=true` in Railway Variables
 - Orders placed on: https://testnet.binance.vision
 - Perfect for testing your alerts
 
-### Mode 2: BINANCE LIVE (REAL MONEY)
+### Mode 2: DIGITAL_ASSET LIVE (REAL MONEY)
 ⚠️ **For Production** - REAL MONEY TRADES
 - Set `BINANCE_TESTNET=false` in Railway Variables
-- Orders placed on: https://binance.com
+- Orders placed on: https://digital_asset.com
 - START WITH SMALL QUANTITIES
 
 ### Mode 3: FLATTRADE (STOCKS)
-📈 **For Equity Trading**
-- Set `broker: "FLATTRADE"` in TradingView alert message
+📈 **For Equity Execution**
+- Set `broker: "FLATTRADE"` in MarketFeed alert message
 - Orders placed on Flattrade broker
 
 ---
 
-## 🔧 STEP 2: Configure TradingView Alert
+## 🔧 STEP 2: Configure MarketFeed Alert
 
-### In TradingView Pine Script Alert:
+### In MarketFeed Pine Script Alert:
 
 ```
-http://webhook_url = "https://tradingview-webhook-bot-production-bf38.up.railway.app/webhook"
+http://webhook_url = "https://market_feed-webhook-bot-production-bf38.up.railway.app/webhook"
 http_method = POST
 http_body = {json}
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "buy",
     "quantity": 0.001,
@@ -68,7 +68,7 @@ http_body = {json}
 **BUY SIGNAL**:
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "buy",
     "quantity": 0.001,
@@ -79,7 +79,7 @@ http_body = {json}
 **SELL SIGNAL**:
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "BTCUSDT",
     "side": "sell",
     "quantity": 0.001,
@@ -90,7 +90,7 @@ http_body = {json}
 **LIMIT ORDER**:
 ```json
 {
-    "broker": "BINANCE",
+    "broker": "DIGITAL_ASSET",
     "symbol": "ETHUSDT",
     "side": "buy",
     "quantity": 0.1,
@@ -99,7 +99,7 @@ http_body = {json}
 }
 ```
 
-**BINANCE REAL (LIVE) MODE**:
+**DIGITAL_ASSET REAL (LIVE) MODE**:
 ```json
 {
     "broker": "BINANCE_REAL",
@@ -112,14 +112,14 @@ http_body = {json}
 
 ---
 
-## 🧪 STEP 3: Test with Postman (Before TradingView)
+## 🧪 STEP 3: Test with Postman (Before MarketFeed)
 
 ### If you want to test manually first:
 
 1. Open Postman or similar API tool
 2. Create POST request to:
    ```
-   https://tradingview-webhook-bot-production-bf38.up.railway.app/webhook
+   https://market_feed-webhook-bot-production-bf38.up.railway.app/webhook
    ```
 
 3. Set Headers:
@@ -130,7 +130,7 @@ http_body = {json}
 4. Set Body (raw JSON):
    ```json
    {
-       "broker": "BINANCE",
+       "broker": "DIGITAL_ASSET",
        "symbol": "BTCUSDT",
        "side": "buy",
        "quantity": 0.001,
@@ -159,13 +159,13 @@ Go to: https://railway.com → Project → Logs
 
 Look for:
 ```
-✅ Processing Binance Signal: BUY BTCUSDT 0.001 @ MARKET
+✅ Processing DigitalAsset Signal: BUY BTCUSDT 0.001 @ MARKET
 ✅ Current price: $43,500
 ✅ Order placed successfully: 123456789
 Status: FILLED
 ```
 
-### Check 2: Binance Account (Within 10 seconds)
+### Check 2: DigitalAsset Account (Within 10 seconds)
 
 **For Testnet**:
 1. Go to: https://testnet.binance.vision
@@ -175,7 +175,7 @@ Status: FILLED
 5. Status should be: **FILLED** or **PARTIALLY_FILLED**
 
 **For Live**:
-1. Go to: https://binance.com
+1. Go to: https://digital_asset.com
 2. Login to your account
 3. Navigate to: Futures → Open Orders OR Order History
 4. Find your order
@@ -231,7 +231,7 @@ Time: 10:00:00 AM
 ↓
 Chart Close Above 50,000
 ↓  
-TradingView Alert Fires
+MarketFeed Alert Fires
 ↓ (1 second)
 POST /webhook sent to Railway
 ↓ (2 seconds)
@@ -243,7 +243,7 @@ Parameters extracted & validated
 ↓ (5 seconds)
 MIN_NOTIONAL check: 0.001 * 43,500 = $43.50 ✅ (>$10)
 ↓ (6 seconds)
-API call sent to Binance
+API call sent to DigitalAsset
 ↓ (7 seconds)
 Order created: orderId=123456789
 ↓ (8 seconds)
@@ -251,7 +251,7 @@ Response received by Railway
 ↓ (9 seconds)
 Logged in Railway Dashboard
 ↓ (10 seconds)
-Order visible in Binance account ✅ FILLED
+Order visible in DigitalAsset account ✅ FILLED
 ```
 
 ---
@@ -266,7 +266,7 @@ Order visible in Binance account ✅ FILLED
 
 ✅ **ALWAYS**:
 - Keep API keys in Railway Variables only
-- Set IP whitelist on Binance API
+- Set IP whitelist on DigitalAsset API
 - Test on testnet first
 - Start with small quantities (0.001 BTC)
 - Monitor first 10 orders manually
@@ -284,17 +284,17 @@ Set BINANCE_TESTNET = true
 
 ### 2. Test One Alert
 ```
-Go to TradingView
+Go to MarketFeed
 Create and save 1 test alert
 Wait for condition to trigger
 Watch Railway logs
-Verify in Binance testnet
+Verify in DigitalAsset testnet
 ```
 
 ### 3. Verify Success
 ```
 ✅ Order appears in Railway logs
-✅ Order visible in Binance account
+✅ Order visible in DigitalAsset account
 ✅ Order status is FILLED
 ✅ Your balance updated
 ```
@@ -313,9 +313,9 @@ Monitor closely on FIRST 5 ORDERS
 
 You'll know it's working when:
 
-1. ✅ TradingView alert fires on chart condition
+1. ✅ MarketFeed alert fires on chart condition
 2. ✅ Railway logs show "Order placed successfully"
-3. ✅ Order appears in Binance within 10 seconds
+3. ✅ Order appears in DigitalAsset within 10 seconds
 4. ✅ Order status is FILLED or PARTIALLY_FILLED
 5. ✅ Your balance decreases by order amount
 6. ✅ No errors in Railway logs
@@ -325,9 +325,9 @@ You'll know it's working when:
 ## 🔗 Quick Links
 
 - Railway Dashboard: https://railway.com/dashboard
-- Binance Testnet: https://testnet.binance.vision
-- Binance Live: https://binance.com
-- TradingView: https://tradingview.com
+- DigitalAsset Testnet: https://testnet.binance.vision
+- DigitalAsset Live: https://digital_asset.com
+- MarketFeed: https://market_feed.com
 - Railway Logs: Check [your project]
 
 ---

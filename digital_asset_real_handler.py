@@ -1,10 +1,10 @@
-"""Binance REAL (LIVE TRADING) Handler
-USE THIS ONLY FOR LIVE/REAL TRADING with real money
+"""DigitalAsset REAL (LIVE EXECUTION) Handler
+USE THIS ONLY FOR LIVE/REAL EXECUTION with real money
 Difference from binance_handler.py: Uses REAL API keys directly (testnet=False)
 """
 
-from binance.client import Client
-from binance.enums import *
+from digital_asset.client import Client
+from digital_asset.enums import *
 import os
 import json
 import logging
@@ -13,18 +13,18 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def handle_real_binance_order(data):
-    """Handle real (live) Binance Futures orders - PRODUCTION MODE"""
+    """Handle real (live) DigitalAsset Futures orders - PRODUCTION MODE"""
     try:
         # REAL CREDENTIALS - DIRECTLY FROM ENV
         api_key = os.getenv("BINANCE_API_KEY")
         api_secret = os.getenv("BINANCE_API_SECRET")
         
         if not api_key or not api_secret:
-            logger.error("Missing BINANCE API credentials for REAL trading")
-            return {"status": "error", "message": "Missing API credentials for REAL trading"}
+            logger.error("Missing DIGITAL_ASSET API credentials for REAL execution")
+            return {"status": "error", "message": "Missing API credentials for REAL execution"}
         
-        # PRODUCTION MODE: testnet=False (REAL TRADING)
-        logger.warning("⚠️ INITIALIZING REAL BINANCE TRADING - LIVE MONEY AT RISK")
+        # PRODUCTION MODE: testnet=False (REAL EXECUTION)
+        logger.warning("⚠️ INITIALIZING REAL DIGITAL_ASSET EXECUTION - LIVE MONEY AT RISK")
         client = Client(api_key, api_secret, testnet=False)
         
         # Parse input data
@@ -111,5 +111,5 @@ def handle_real_binance_order(data):
                 return {"status": "error", "message": error_msg}
     
     except Exception as e:
-        logger.exception(f"REAL TRADING ERROR: {str(e)}")
+        logger.exception(f"REAL EXECUTION ERROR: {str(e)}")
         return {"status": "error", "message": f"Unexpected error: {str(e)}"}

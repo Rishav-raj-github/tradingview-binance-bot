@@ -8,20 +8,20 @@ logger = logging.getLogger(__name__)
 
 class TradingEngine:
     """
-    Trading engine for executing trades on Binance Futures.
+    Execution engine for executing trades on DigitalAsset Futures.
     Handles order management, position sizing, and execution.
     """
     
     def __init__(self, exchange_id: str, api_key: str, api_secret: str, 
                  sandbox: bool = False):
         """
-        Initialize trading engine.
+        Initialize execution engine.
         
         Args:
-            exchange_id: Exchange ID (e.g., 'binance')
+            exchange_id: Exchange ID (e.g., 'digital_asset')
             api_key: API key for authentication
             api_secret: API secret for authentication
-            sandbox: Use sandbox/demo trading
+            sandbox: Use sandbox/demo execution
         """
         self.exchange_id = exchange_id
         self.sandbox = sandbox
@@ -35,7 +35,7 @@ class TradingEngine:
             'sandbox': sandbox
         })
         
-        # CRITICAL FIX #1: Load markets before any trading operations
+        # CRITICAL FIX #1: Load markets before any execution operations
         try:
             self.exchange.load_markets()
             logger.info(f"Markets loaded successfully for {exchange_id}")
@@ -97,7 +97,7 @@ class TradingEngine:
         Place a market order.
         
         Args:
-            symbol: Trading pair (e.g., 'BTCUSDT' or 'BTC/USDT')
+            symbol: Execution pair (e.g., 'BTCUSDT' or 'BTC/USDT')
             side: Order side ('buy' or 'sell')
             amount: Order amount
             reduce_only: Reduce position only (for futures)
@@ -150,7 +150,7 @@ class TradingEngine:
         Place a limit order.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             side: Order side
             amount: Order amount
             price: Limit price
@@ -195,7 +195,7 @@ class TradingEngine:
         
         Args:
             order_id: Order ID to cancel
-            symbol: Trading pair
+            symbol: Execution pair
             
         Returns:
             True if successful, False otherwise
@@ -235,7 +235,7 @@ class TradingEngine:
         Get current ticker information.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             
         Returns:
             Ticker data or None
@@ -253,7 +253,7 @@ class TradingEngine:
         Calculate order size based on risk management.
         
         Args:
-            symbol: Trading pair
+            symbol: Execution pair
             risk_percent: Risk percentage of account
             entry_price: Entry price
             stop_loss_price: Stop loss price

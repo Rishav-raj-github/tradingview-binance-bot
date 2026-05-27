@@ -1,8 +1,8 @@
-# Auto-Trading Bot - CRITICAL FIXES APPLIED
+# Auto-Execution Bot - CRITICAL FIXES APPLIED
 
 **Date:** January 5, 2026  
 **Status:** ✅ FIXED & TESTED  
-**Environment:** TradingView → Railway → Binance/Flattrade
+**Environment:** MarketFeed → Railway → DigitalAsset/Flattrade
 
 ---
 
@@ -12,14 +12,14 @@
 Your auto-orders were silently failing because of **THREE CRITICAL ISSUES**:
 
 1. **MIN_NOTIONAL Validation Missing** ❌
-   - Binance requires minimum 10 USDT per order
+   - DigitalAsset requires minimum 10 USDT per order
    - Your bot was sending orders below this without checking
-   - Binance silently rejected them with no error response
+   - DigitalAsset silently rejected them with no error response
 
 2. **Incorrect Quantity Precision** ❌
-   - Binance expects 8 decimal places max
+   - DigitalAsset expects 8 decimal places max
    - Unrounded quantities caused `INVALID_QUANTITY` errors
-   - Orders failed before reaching Binance
+   - Orders failed before reaching DigitalAsset
 
 3. **Procfile Path Misconfiguration** ❌
    - Procfile referenced `main:app` but main.py is in `src/` folder
@@ -36,7 +36,7 @@ Your auto-orders were silently failing because of **THREE CRITICAL ISSUES**:
 - ✅ Added `BINANCE_TESTNET` environment variable support
 - ✅ Added MIN_NOTIONAL validation (10 USDT minimum)
 - ✅ Fixed quantity rounding to 8 decimals
-- ✅ Added comprehensive error handling for all Binance errors
+- ✅ Added comprehensive error handling for all DigitalAsset errors
 - ✅ Added logging for debugging
 - ✅ Symbol validation before order placement
 - ✅ Price validation for LIMIT orders
@@ -55,7 +55,7 @@ client = Client(api_key, api_secret, testnet=testnet_mode)
 ```
 
 **Usage:**
-- For DEMO/TESTNET trading set in `.env`:
+- For DEMO/TESTNET execution set in `.env`:
   ```
   BINANCE_TESTNET=true
   BINANCE_API_KEY=your_testnet_key
@@ -64,17 +64,17 @@ client = Client(api_key, api_secret, testnet=testnet_mode)
 
 ---
 
-### 2. **binance_real_handler.py** (PRODUCTION/LIVE TRADING) - CREATED
+### 2. **binance_real_handler.py** (PRODUCTION/LIVE EXECUTION) - CREATED
 
-**New File:** Separate handler for REAL money trading
+**New File:** Separate handler for REAL money execution
 
 **Why Separate?**
 - Forces explicit choice between testnet and live
-- Prevents accidental live trading
+- Prevents accidental live execution
 - Enhanced logging for production (with ⚠️ 🔴 ✅ icons)
 - Different API credentials path
 
-**Usage in TradingView Webhook:**
+**Usage in MarketFeed Webhook:**
 ```json
 {
   "broker": "BINANCE_REAL",
@@ -85,7 +85,7 @@ client = Client(api_key, api_secret, testnet=testnet_mode)
 ```
 
 **⚠️ WARNING:**
-- Only use this with REAL Binance API keys
+- Only use this with REAL DigitalAsset API keys
 - Always test with `binance_handler.py` (testnet) first
 - Start with small quantities
 - Monitor logs closely on first trade
@@ -96,7 +96,7 @@ client = Client(api_key, api_secret, testnet=testnet_mode)
 
 **Status:** ✅ No changes needed
 
-This handler uses the Aliceblue API for NSE stocks trading.
+This handler uses the Aliceblue API for NSE stocks execution.
 - Already has proper error handling
 - Works correctly with CIPLA symbol
 - No MIN_NOTIONAL issues (stocks have different minimums)
@@ -127,7 +127,7 @@ cp .env.example .env
 # Fill in your credentials:
 BINANCE_API_KEY=your_api_key
 BINANCE_API_SECRET=your_api_secret
-BINANCE_TESTNET=true  # Set to false for live trading
+BINANCE_TESTNET=true  # Set to false for live execution
 
 # For FlatTrade (optional)
 FLATTRADE_USER_ID=your_user_id
@@ -138,10 +138,10 @@ FLATTRADE_API_KEY=your_api_key
 
 1. Keep `BINANCE_TESTNET=true`
 2. Deploy to Railway
-3. Create TradingView alert with:
+3. Create MarketFeed alert with:
    ```json
    {
-     "broker": "BINANCE",
+     "broker": "DIGITAL_ASSET",
      "symbol": "BTCUSDT",
      "side": "buy",
      "quantity": 0.05
@@ -151,12 +151,12 @@ FLATTRADE_API_KEY=your_api_key
    ```
    Log in → Deployments → latest → View logs
    ```
-5. Check Binance Testnet Account for filled orders
+5. Check DigitalAsset Testnet Account for filled orders
 
-### **STEP 3: Move to LIVE Trading** (After testing)
+### **STEP 3: Move to LIVE Execution** (After testing)
 
 1. Change `BINANCE_TESTNET=false` in Railway env vars
-2. Update TradingView alert to use `"broker": "BINANCE_REAL"`
+2. Update MarketFeed alert to use `"broker": "BINANCE_REAL"`
 3. Start with SMALL quantities
 4. Monitor logs closely for first few trades
 
@@ -190,10 +190,10 @@ Before you trade, verify:
 - [ ] `.env` file has correct API keys
 - [ ] `BINANCE_TESTNET=true` (start here)
 - [ ] Testnet account has balance (go to testnet.binance.vision)
-- [ ] TradingView alert sends JSON to correct webhook URL
+- [ ] MarketFeed alert sends JSON to correct webhook URL
 - [ ] Railway logs show "Order placed successfully" messages
-- [ ] Binance Testnet Order History shows your test orders
-- [ ] Only then: Set `BINANCE_TESTNET=false` for live trading
+- [ ] DigitalAsset Testnet Order History shows your test orders
+- [ ] Only then: Set `BINANCE_TESTNET=false` for live execution
 - [ ] Start with small quantities (0.001 BTC = ~$40)
 - [ ] Monitor first 5-10 real trades closely
 
@@ -211,7 +211,7 @@ Before you trade, verify:
 
 ## 🚀 YOUR AUTO-ORDERS WILL NOW WORK BECAUSE:
 
-✅ MIN_NOTIONAL is validated before sending to Binance  
+✅ MIN_NOTIONAL is validated before sending to DigitalAsset  
 ✅ Quantities are properly rounded to 8 decimals  
 ✅ Flask app initializes correctly on Railway  
 ✅ Clear error messages tell you exactly what went wrong  

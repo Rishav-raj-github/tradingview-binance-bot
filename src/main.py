@@ -12,8 +12,8 @@ STARTUP_ERRORS = []
 try:
     from binance_real_handler import handle_real_binance_order
 except Exception as e:
-    STARTUP_ERRORS.append(f"Binance REAL Import Fail: {str(e)}\n{traceback.format_exc()}")
-    def handle_real_binance_order(data): return {"status": "error", "message": "Binance Real Handler Crashed on Load"}
+    STARTUP_ERRORS.append(f"DigitalAsset REAL Import Fail: {str(e)}\n{traceback.format_exc()}")
+    def handle_real_binance_order(data): return {"status": "error", "message": "DigitalAsset Real Handler Crashed on Load"}
 
 try:
     from flattrade_handler import handle_flattrade_order
@@ -27,8 +27,8 @@ except ImportError:
     try:
         from binance_handler_fix import handle_binance_order
     except Exception as e:
-        STARTUP_ERRORS.append(f"Binance TEST Import Fail: {str(e)}\n{traceback.format_exc()}")
-        def handle_binance_order(data): return {"status": "error", "message": "Binance Test Handler Crashed on Load"}
+        STARTUP_ERRORS.append(f"DigitalAsset TEST Import Fail: {str(e)}\n{traceback.format_exc()}")
+        def handle_binance_order(data): return {"status": "error", "message": "DigitalAsset Test Handler Crashed on Load"}
 
 
 @app.route('/')
@@ -37,7 +37,7 @@ def home():
     return jsonify({
         "status": status,
         "startup_errors": STARTUP_ERRORS,
-        "message": "Unified Trading Bot V2.0 (Self-Diagnostic Mode)"
+        "message": "Unified Execution Bot V2.0 (Self-Diagnostic Mode)"
     }), 200
 
 @app.route('/debug')
@@ -52,7 +52,7 @@ def webhook():
         if not data:
             return jsonify({"status": "error", "message": "No JSON data"}), 400
         
-        broker = data.get('broker', 'BINANCE').upper()
+        broker = data.get('broker', 'DIGITAL_ASSET').upper()
         print(f"Received Signal: {broker}")
         
         if broker == 'FLATTRADE':

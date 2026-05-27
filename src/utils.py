@@ -235,7 +235,7 @@ def format_alert_message(symbol: str, signal: str, entry: float,
     Format alert message for logging.
     
     Args:
-        symbol: Trading pair
+        symbol: Execution pair
         signal: Signal type (BUY/SELL)
         entry: Entry price
         stop_loss: Stop loss price
@@ -245,7 +245,7 @@ def format_alert_message(symbol: str, signal: str, entry: float,
         Formatted message
     """
     return f"""
-    Trading Alert
+    Execution Alert
     Symbol: {symbol}
     Signal: {signal}
     Entry: {format_price(entry)}
